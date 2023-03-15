@@ -1,3 +1,5 @@
+mod main_window;
+
 use gtk::{
     self,
     gio::{self},
@@ -6,13 +8,21 @@ use gtk::{
     Application, ApplicationWindow,
 };
 
+use main_window::MainWindow;
+
+
 const APP_ID: &str = "info.zekefast.FirefoxSessionStoreManager";
-const TITLE: &str = "Firefox Session Store Manager";
-const DEFAULT_WIDTH: i32 = 600;
-const DEFAULT_HEIGHT: i32 = 300;
+
 
 fn main() -> glib::ExitCode {
-    let app = Application::builder().application_id(APP_ID).build();
+    // GOTCHA: The name has to correspond to "target" argument given to
+    //   "glib_build_tools::compile_resources" function in "build.rs" file.
+    gio::resources_register_include!("firefox-session-store-manager.gresource")
+        .expect("Failed to register resrouces.");
+
+    let app = Application::builder()
+        .application_id(APP_ID)
+        .build();
 
     app.connect_activate(build_ui);
 
@@ -20,12 +30,7 @@ fn main() -> glib::ExitCode {
 }
 
 fn build_ui(app: &Application) {
-    let window = ApplicationWindow::builder()
-        .application(app)
-        .title(TITLE)
-        .default_width(DEFAULT_WIDTH)
-        .default_height(DEFAULT_HEIGHT)
-        .build();
+    let window = MainWindow::new(app);
 
     window.present();
 }
