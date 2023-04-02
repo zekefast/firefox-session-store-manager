@@ -1,9 +1,13 @@
 mod main_window;
 
+use std::path::PathBuf;
 use gtk::{
     self,
     prelude::*,
     ApplicationWindow,
+    FileDialog,
+    ListStore,
+    FileFilter,
     gio::{
         self,
         Cancellable,
@@ -29,6 +33,19 @@ use main_window::MainWindow;
 
 const APP_ID: &str = "info.zekefast.FirefoxSessionStoreManager";
 
+
+mod file_ext {
+    use const_format::concatcp;
+
+    pub const SESSIONSTORE: &str = "jsonlz4";
+    pub const SESSIONSTORE_BACKUP: &str = "baklz4";
+
+    pub const WILDCARD_PREFIX: &str = "*";
+    pub const SEPARATOR: &str = ".";
+
+    pub const SESSIONSTORE_MASK: &str = concatcp!(WILDCARD_PREFIX, SEPARATOR, SESSIONSTORE);
+    pub const SESSIONSTORE_BACKUP_MASK: &str = concatcp!(WILDCARD_PREFIX, SEPARATOR, SESSIONSTORE_BACKUP);
+}
 
 mod action {
     use const_format::concatcp;
@@ -63,11 +80,56 @@ fn main() -> glib::ExitCode {
 }
 
 fn build_ui(app: &Application) {
+    let file_filter_json_and_bak = FileFilter::new();
+    file_filter_json_and_bak.set_property(
+        "name",
+        formatcp!(
+            "Session alike files ({}, {})",
+            file_ext::SESSIONSTORE_MASK,
+            file_ext::SESSIONSTORE_BACKUP_MASK,
+        ),
+    );
+    file_filter_json_and_bak.add_suffix(file_ext::SESSIONSTORE);
+    file_filter_json_and_bak.add_suffix(file_ext::SESSIONSTORE_BACKUP);
+
+    let file_filter_json = FileFilter::new();
+    file_filter_json.set_property(
+        "name",
+        formatcp!("Session files ({})", file_ext::SESSIONSTORE_MASK),
+    );
+    file_filter_json.add_suffix(file_ext::SESSIONSTORE);
+
+    let file_filter_bak = FileFilter::new();
+    file_filter_bak.set_property(
+        "name",
+        format!("Session backup files ({})", file_ext::SESSIONSTORE_BACKUP_MASK),
+    );
+    file_filter_bak.add_suffix(file_ext::SESSIONSTORE_BACKUP);
+
+    let file_filter_all = FileFilter::new();
+    file_filter_all.set_property("name", "All files");
+    file_filter_all.add_pattern("*");
+
+    let filter_model = gio::ListStore::new(FileFilter::static_type());
+    filter_model.append(&file_filter_json_and_bak);
+    filter_model.append(&file_filter_json);
+    filter_model.append(&file_filter_bak);
+    filter_model.append(&file_filter_all);
+
+    let open_file_dialog = FileDialog::builder()
+        .title("Open Firefox's Session Store File or It's Backup")
+        .modal(true)
+        .filters(&filter_model)
+        .build();
+
     let window = MainWindow::new(app);
 
     let open_file_dialog_action = SimpleAction::new(action::OPEN_FILE_DIALOG, None);
-    open_file_dialog_action.connect_activate(clone!(@weak window => move |_action, _parameter| {
-
+    open_file_dialog_action.connect_activate(clone!(@weak window, @strong open_file_dialog => move |_action, _parameter| {
+        open_file_dialog.open(Some(&window), Cancellable::NONE, clone!(@weak window => move |result| {
+            if let Ok(Some(pathbuf)) = result.as_ref().map(|file| file.path()) {
+            }
+        }));
     }));
     app.add_action(&open_file_dialog_action);
 
