@@ -4,9 +4,6 @@ use gtk::{
     self,
     prelude::*,
     ApplicationWindow,
-    FileDialog,
-    ListStore,
-    FileFilter,
     gio::{
         self,
         Cancellable,
@@ -25,12 +22,27 @@ use adw::{
     prelude::*,
     Application,
 };
+use const_format::formatcp;
 
 use main_window::MainWindow;
 
 
 const APP_ID: &str = "info.zekefast.FirefoxSessionStoreManager";
 
+
+mod action {
+    use const_format::concatcp;
+
+    pub const SEPARATOR: &str = ".";
+    pub const APP_PREFIX: &str = "app";
+    pub const WIN_PREFIX: &str = "win";
+
+    pub const OPEN_ABOUT_WINDOW: &str = "open-about-window";
+    pub const OPEN_ABOUT_WINDOW_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_ABOUT_WINDOW);
+
+    pub const OPEN_PREFERENCES_WINDOW: &str = "open-preferences-window";
+    pub const OPEN_PREFERENCES_WINDOW_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_PREFERENCES_WINDOW);
+}
 
 fn main() -> glib::ExitCode {
     // GOTCHA: The name has to correspond to "target" argument given to
@@ -49,6 +61,20 @@ fn main() -> glib::ExitCode {
 
 fn build_ui(app: &Application) {
     let window = MainWindow::new(app);
+
+    let open_about_window_action = SimpleAction::new(action::OPEN_ABOUT_WINDOW, None);
+    open_about_window_action.connect_activate(move |_action, _parameter| {
+        todo!("Open About Dialog Window here");
+    });
+    app.add_action(&open_about_window_action);
+
+    let open_preferences_window_action = SimpleAction::new(action::OPEN_PREFERENCES_WINDOW, None);
+    open_preferences_window_action.connect_activate(move |_action, _parameter| {
+        todo!("Open Preferences Dialog Window here");
+    });
+    app.add_action(&open_preferences_window_action);
+
+
 
     window.present();
 }

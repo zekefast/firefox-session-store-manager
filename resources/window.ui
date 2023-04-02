@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+    <menu id="main-menu">
+        <item>
+            <attribute name="label" translatable="yes">_Preferences</attribute>
+            <attribute name="action">app.open-preferences-window</attribute>
+        </item>
+        <item>
+            <attribute name="label" translatable="yes">_About</attribute>
+            <attribute name="action">app.open-about-window</attribute>
+        </item>
+    </menu>
     <template class="MainWindow" parent="AdwApplicationWindow">
         <property name="default-width">600</property>
         <property name="default-height">300</property>
@@ -9,6 +19,17 @@
             <object class="GtkBox">
                 <property name="orientation">vertical</property>
                 <property name="width-request">200</property>
+                <child>
+                    <object class="AdwHeaderBar">
+                        <child type="end">
+                            <object class="GtkMenuButton">
+                                <property name="icon-name">open-menu-symbolic</property>
+                                <property name="menu-model">main-menu</property>
+                                <property name="tooltip-text" translatable="yes">Main Menu</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
             </object>
         </property>
     </template>
