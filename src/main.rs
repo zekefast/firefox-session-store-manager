@@ -37,6 +37,9 @@ mod action {
     pub const APP_PREFIX: &str = "app";
     pub const WIN_PREFIX: &str = "win";
 
+    pub const OPEN_FILE_DIALOG: &str = "open-file-dialog";
+    pub const OPEN_FILE_DIALOG_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_FILE_DIALOG);
+
     pub const OPEN_ABOUT_WINDOW: &str = "open-about-window";
     pub const OPEN_ABOUT_WINDOW_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_ABOUT_WINDOW);
 
@@ -62,6 +65,12 @@ fn main() -> glib::ExitCode {
 fn build_ui(app: &Application) {
     let window = MainWindow::new(app);
 
+    let open_file_dialog_action = SimpleAction::new(action::OPEN_FILE_DIALOG, None);
+    open_file_dialog_action.connect_activate(clone!(@weak window => move |_action, _parameter| {
+
+    }));
+    app.add_action(&open_file_dialog_action);
+
     let open_about_window_action = SimpleAction::new(action::OPEN_ABOUT_WINDOW, None);
     open_about_window_action.connect_activate(move |_action, _parameter| {
         todo!("Open About Dialog Window here");
@@ -73,7 +82,6 @@ fn build_ui(app: &Application) {
         todo!("Open Preferences Dialog Window here");
     });
     app.add_action(&open_preferences_window_action);
-
 
 
     window.present();

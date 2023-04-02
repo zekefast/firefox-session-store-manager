@@ -21,6 +21,16 @@
                 <property name="width-request">200</property>
                 <child>
                     <object class="AdwHeaderBar">
+                        <child type="start">
+                            <object class="AdwSplitButton">
+                                <property name="icon-name">document-open-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Open File</property>
+                                <property name="dropdown-tooltip" translatable="yes">Recently Opened Files</property>
+                                <property name="action-name">app.open-file-dialog</property>
+                                <property name="label">_Open</property>
+                                <property name="use-underline">True</property>
+                            </object>
+                        </child>
                         <child type="end">
                             <object class="GtkMenuButton">
                                 <property name="icon-name">open-menu-symbolic</property>
