@@ -1,6 +1,7 @@
 mod imp;
 
 use gtk::{
+    self,
     prelude::*,
     subclass::prelude::*,
     glib::{
@@ -10,12 +11,16 @@ use gtk::{
     gio::{
         self,
     },
+};
+use adw::{
+    self,
     Application,
 };
 
 glib::wrapper! {
     pub struct MainWindow(ObjectSubclass<imp::MainWindow>)
         @extends
+            adw::ApplicationWindow,
             gtk::ApplicationWindow,
             gtk::Window,
             gtk::Widget,

@@ -1,4 +1,7 @@
 use gtk::{
+    self,
+    CompositeTemplate,
+    Button,
     subclass::prelude::*,
     gio::{
         self,
@@ -7,7 +10,11 @@ use gtk::{
         self,
         subclass::InitializingObject,
     },
-    CompositeTemplate,
+};
+use adw::{
+    self,
+    prelude::*,
+    subclass::prelude::*,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -18,7 +25,7 @@ pub struct MainWindow;
 impl ObjectSubclass for MainWindow {
     const NAME: &'static str = "MainWindow";
     type Type = super::MainWindow;
-    type ParentType = gtk::ApplicationWindow;
+    type ParentType = adw::ApplicationWindow;
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
@@ -39,6 +46,7 @@ impl ObjectImpl for MainWindow {
     }
 }
 
-impl WindowImpl for MainWindow {}
 impl WidgetImpl for MainWindow {}
+impl WindowImpl for MainWindow {}
 impl ApplicationWindowImpl for MainWindow {}
+impl AdwApplicationWindowImpl for MainWindow {}

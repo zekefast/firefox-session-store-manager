@@ -2,10 +2,28 @@ mod main_window;
 
 use gtk::{
     self,
-    gio::{self},
-    glib::{self, prelude::*},
     prelude::*,
-    Application, ApplicationWindow,
+    ApplicationWindow,
+    FileDialog,
+    ListStore,
+    FileFilter,
+    gio::{
+        self,
+        Cancellable,
+        SimpleAction
+    },
+    glib::{
+        self,
+        prelude::*,
+        clone,
+    },
+    subclass::prelude::ObjectSubclassIsExt,
+};
+
+use adw::{
+    self,
+    prelude::*,
+    Application,
 };
 
 use main_window::MainWindow;
