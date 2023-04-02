@@ -57,6 +57,9 @@ mod action {
     pub const OPEN_FILE_DIALOG: &str = "open-file-dialog";
     pub const OPEN_FILE_DIALOG_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_FILE_DIALOG);
 
+    pub const LOAD_FILE: &str = "load-file";
+    pub const LOAD_FILE_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, LOAD_FILE);
+
     pub const OPEN_ABOUT_WINDOW: &str = "open-about-window";
     pub const OPEN_ABOUT_WINDOW_DETAILED: &str = concatcp!(APP_PREFIX, SEPARATOR, OPEN_ABOUT_WINDOW);
 
@@ -128,6 +131,8 @@ fn build_ui(app: &Application) {
     open_file_dialog_action.connect_activate(clone!(@weak window, @strong open_file_dialog => move |_action, _parameter| {
         open_file_dialog.open(Some(&window), Cancellable::NONE, clone!(@weak window => move |result| {
             if let Ok(Some(pathbuf)) = result.as_ref().map(|file| file.path()) {
+                WidgetExt::activate_action(&window, action::LOAD_FILE_DETAILED, Some(&pathbuf.to_variant()))
+                    .expect("The action does not exist.");
             }
         }));
     }));
@@ -144,6 +149,17 @@ fn build_ui(app: &Application) {
         todo!("Open Preferences Dialog Window here");
     });
     app.add_action(&open_preferences_window_action);
+
+    let load_file_action = SimpleAction::new(action::LOAD_FILE, Some(&PathBuf::static_variant_type()));
+    load_file_action.connect_activate(move |_action, parameter| {
+        let pathbuf = parameter
+            .expect("Could not get parameter of 'app.load-file' action.")
+            .get::<PathBuf>()
+            .expect("The variant needs to be of type `String`.");
+
+        todo!("Load file using {:?} path", pathbuf);
+    });
+    app.add_action(&load_file_action);
 
 
     window.present();
